@@ -4,7 +4,7 @@ import java.net.*;
 public class FileReceiver {
     public static void main(String[] args) {
         if (args.length < 1) {
-            System.out.println("Usage: java FileReceiver <port>");
+            System.out.println("Include port number: java FileReceiver <port>");
             return;
         }
         int port = Integer.parseInt(args[0]);
@@ -15,26 +15,23 @@ public class FileReceiver {
             try (Socket socket = serverSocket.accept()) {
                 System.out.println("Connection accepted.\n");
 
-                DataInputStream in = new DataInputStream(socket.getInputStream());
+                InputStream in = socket.getInputStream();
 
-                String fileName = in.readUTF();
+                String savedFileName = "received_test.txt";
 
-                System.out.println("Receiving file:\n" + fileName + "\n");
+                System.out.println("Receiving file:\n" + savedFileName + "\n");
 
-                String savedName = "received_" + fileName;
-
-                try (FileOutputStream fileOut = new FileOutputStream(savedName)) {
+                try (FileOutputStream fileOut = new FileOutputStream(savedFileName)) {
                     byte[] buffer = new byte[4096];
                     int bytesRead;
 
                     while ((bytesRead = in.read(buffer)) != -1) {
-
                         fileOut.write(buffer, 0, bytesRead);
                     }
                 }
 
                 System.out.println("Transfer complete.\n");
-                System.out.println("Saved file:\n" + savedName);
+                System.out.println("Saved file:\n" + savedFileName);
             }
 
         } catch (Exception e) {
